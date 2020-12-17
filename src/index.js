@@ -10,7 +10,7 @@ const { connection } = require('./connector')
 
 const covidTallyModel = connection;
 
-app.get("./totalRecovered",async(req,res)=>{
+app.get("/totalRecovered",async(req,res)=>{
     const resDoc = await covidTallyModel.aggregate([
         {
             $group: {
@@ -20,11 +20,10 @@ app.get("./totalRecovered",async(req,res)=>{
         },
     ]);
     const firstResult = resDoc[0];
-    res.send({data : firstResult}
-    );
-})
+    res.send({data : firstResult});
+});
 
-app.get("./totalDeath",async(req,res)=>{
+app.get("/totalDeath",async(req,res)=>{
     const resDoc = await covidTallyModel.aggregate([
         {
             $group: {
@@ -38,7 +37,7 @@ app.get("./totalDeath",async(req,res)=>{
     );
 })
 
-app.get("./hotspotStates",async(req,res)=>{
+app.get("/hotspotStates",async(req,res)=>{
     const resDoc = await covidTallyModel.aggregate([
         {
             $project: {
@@ -66,7 +65,7 @@ app.get("./hotspotStates",async(req,res)=>{
     );
 })
 
-app.get("./healthyStates",async(req,res)=>{
+app.get("/healthyStates",async(req,res)=>{
     const resDoc = await covidTallyModel.aggregate([
         {
             $project: {
@@ -94,7 +93,7 @@ app.get("./healthyStates",async(req,res)=>{
     );
 })
 
-app.get("./totalActive",async(req,res)=>{
+app.get("/totalActive",async(req,res)=>{
     const resDoc = await covidTallyModel.aggregate([
         {
             $group: {
