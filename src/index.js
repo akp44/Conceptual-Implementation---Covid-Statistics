@@ -74,7 +74,7 @@ app.get("/healthyStates", async(req,res)=>{
                     $round: [
                         {
                             $divide: [
-                                "death",
+                                "$death",
                                 "$infected",
                             ],
                         },
