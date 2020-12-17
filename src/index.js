@@ -65,7 +65,7 @@ app.get("/hotspotStates",async(req,res)=>{
     );
 })
 
-app.get("/healthyStates",async(req,res)=>{
+app.get("/healthyStates", async(req,res)=>{
     const resDoc = await covidTallyModel.aggregate([
         {
             $project: {
@@ -85,13 +85,12 @@ app.get("/healthyStates",async(req,res)=>{
         },
         {
             $match: {
-                mortality: {$lt: 0.005}
+                mortality: { $lt: 0.005 }
             }
         }
     ]);
-    res.send({data : resDoc}
-    );
-})
+    res.send({data : resDoc});
+});
 
 app.get("/totalActive",async(req,res)=>{
     const resDoc = await covidTallyModel.aggregate([
