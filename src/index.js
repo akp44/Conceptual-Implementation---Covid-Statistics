@@ -8,7 +8,117 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 const { connection } = require('./connector')
 
+const covidTallyModel = connection;
 
+app.get('./totalRecovered',async(req,res)=>{
+    const resDoc = await covidTallyModel.aggregate([
+        {
+            $group: {
+                _id: "total",
+                recovered: {$sum: "$recovered"},
+                count: {$sum: 1}
+            },
+        },
+    ]);
+    const firstResult = resDoc[0];
+    res.send({data : firstResult}
+    );
+})
+
+app.get('./totalDeath',async(req,res)=>{
+    const resDoc = await covidTallyModel.aggregate([
+        {
+            $group: {
+                _id: "total",
+                death: {$sum: "$death"},
+            },
+        },
+    ]);
+    const firstResult = resDoc[0];
+    res.send({data : firstResult}
+    );
+})
+
+app.get('./hotspotStates',async(req,res)=>{
+    const resDoc = await covidTallyModel.aggregate([
+        {
+            $project: {
+                state: "$state",
+                rate: {
+                    $round: [
+                        {
+                            $divide: [
+                                {$subtract: ["$infected","$recovered"]},
+                                "$infected",
+                            ],
+                        },
+                        5,
+                    ],
+                },
+            },
+        },
+        {
+            $match: {
+                rate: {$gt: 0.1}
+            }
+        }
+    ]);
+    res.send({data : resDoc}
+    );
+})
+
+
+app.get('./healthyStates',async(req,res)=>{
+    const resDoc = await covidTallyModel.aggregate([
+        {
+            $project: {
+                state: "$state",
+                mortality: {
+                    $round: [
+                        {
+                            $divide: [
+                                "death",
+                                "$infected",
+                            ],
+                        },
+                        5,
+                    ],
+                },
+            },
+        },
+        {
+            $match: {
+                mortality: {$lt: 0.005}
+            }
+        }
+    ]);
+    res.send({data : resDoc}
+    );
+})
+
+app.get('./totalActive',async(req,res)=>{
+    const resDoc = await covidTallyModel.aggregate([
+        {
+            $group: {
+                _id: "total",
+                recovered: {$sum: "$recovered"},
+            },
+        },
+    ]);
+    const recoveredResult = resDoc[0];
+
+    const resDoc2 = await covidTallyModel.aggregate([
+        {
+            $group: {
+                _id: "total",
+                infected: {$sum: "$infected"},
+            },
+        },
+    ]);
+    const infectedResult = resDoc2[0];
+    
+    res.send({data: {_id: "total",active: infectedResult.infected-recoveredResult.recovered}})
+});
 
 
 
