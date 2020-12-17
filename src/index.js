@@ -16,7 +16,6 @@ app.get('./totalRecovered',async(req,res)=>{
             $group: {
                 _id: "total",
                 recovered: {$sum: "$recovered"},
-                count: {$sum: 1}
             },
         },
     ]);
