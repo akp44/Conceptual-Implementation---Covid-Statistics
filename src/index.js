@@ -101,22 +101,12 @@ app.get('./totalActive',async(req,res)=>{
             $group: {
                 _id: "total",
                 recovered: {$sum: "$recovered"},
-            },
-        },
-    ]);
-    const recoveredResult = resDoc[0];
-
-    const resDoc2 = await covidTallyModel.aggregate([
-        {
-            $group: {
-                _id: "total",
                 infected: {$sum: "$infected"},
             },
         },
     ]);
-    const infectedResult = resDoc2[0];
-    
-    res.send({data: {_id: "total",active: infectedResult.infected-recoveredResult.recovered}})
+    const result = resDoc[0];
+    res.send({data: {_id: "total",active: result.infected-result.recovered}});
 });
 
 
